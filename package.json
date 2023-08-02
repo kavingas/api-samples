@@ -9,5 +9,8 @@
     "console-colors": "^1.0.1",
     "dotenv": "^16.3.1",
     "uuid": "^9.0.0"
+  },
+  "scripts": {
+    "start": "node --no-warnings index.js"
   }
 }

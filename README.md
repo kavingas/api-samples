@@ -7,5 +7,5 @@ yarn install
 # Run test case using
 
 ```
-yarn index.js
+yarn run start
 ```
