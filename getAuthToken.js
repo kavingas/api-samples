@@ -1,5 +1,5 @@
 const axios = require('axios')
-let token = null
+let token = process.env.ACCESS_TOKEN;
 module.exports = (async () => {
     if (token) {
         return token

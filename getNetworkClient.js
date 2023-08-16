@@ -28,7 +28,7 @@ module.exports = (async () => {
     return {
       ...config,
       baseURL: `${currentUrl.protocol}//${authPart}${currentUrl.host}`,
-      url: currentUrl.pathname,
+      url: currentUrl.pathname + currentUrl.search,
     };
   });
 
