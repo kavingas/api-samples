@@ -4,14 +4,17 @@ module.exports = (async () => {
     if (token) {
         return token
     }
-    const currentUrl = new URL(
-      process.env.URL + "rest/V1/integration/admin/token"
+    const apiURL = new URL(
+      process.env.URL + "integration/customer/token"
     );
-    console.info(`Trying to retrieve auth token from ${currentUrl}`);
-    const response = await axios.post(currentUrl, {
-      username: process.env.ADMIN_USER,
-      password: process.env.ADMIN_PASS,
+    console.info(`Trying to retrieve auth token from ${apiURL}`);
+    // console.log(process.env.CUSTOMER_EMAIL);
+    // console.log(process.env.CUSTOMER_PASS);
+    const response = await axios.post(apiURL, {
+      username: process.env.CUSTOMER_EMAIL,
+      password: process.env.CUSTOMER_PASS,
     });
+    
     token = response.data
     console.info(`auth token: ${token}`)
     return token

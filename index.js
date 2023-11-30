@@ -9,22 +9,80 @@ const payload = require("./payload2.json");
 (async () => {
   try {
     const client = await getNetworkClient;
-    client
-      // .post("rest/shp_fra_fr/V1/products", payload)
-      .get(
-        "rest/view2/V1/products/?searchCriteria[filterGroups][0][filters][0][field]=tax_class_id&searchCriteria[filterGroups][0][filters][0][value]=0&searchCriteria[filterGroups][1][filters][0][field]=type_id&searchCriteria[filterGroups][1][filters][0][value]=simple",
-        {}
-      )
-      .then((r) => {
-        console.log(JSON.stringify(r.data));
-        fs.writeFileSync("response.json", JSON.stringify(r.data));
-      })
-      .catch((e) => {
-        console.error(e.response.data);
-      });
+    await client.post("carts/mine", {});
+    console.log('Quote created');
+    await Promise.all([addItemToCart(client), addItemToCart(client)]);
+    console.log('Items added');
+    await shippingInfo(client);
+    console.log('Shipping details');
+    await createOrder(client);
+    console.log("Order placed")
   } catch (e) {
     console.error(e.response.data);
   }
 })();
 
-//rest/45/V1/products/?searchCriteria[filterGroups][0][filters][0][field]=tax_class_id&searchCriteria[filterGroups][0][filters][0][condition_type]=0&searchCriteria[filterGroups][1][filters][0][field]=type_id&searchCriteria[filterGroups][1][filters][0][value]=simple
+const addItemToCart = async (client) => {
+  await client.post("carts/mine/items", {
+    cartItem: {
+      sku: "p1",
+      qty: 1,
+    },
+  });
+};
+
+const shippingInfo = async (client) => {
+  await client.post("carts/mine/shipping-information", {
+    addressInformation: {
+      shipping_address: {
+        region: "New York",
+        region_id: 43,
+        region_code: "NY",
+        country_id: "US",
+        street: ["123 Oak Ave"],
+        postcode: "10577",
+        city: "Purchase",
+        firstname: "Jane",
+        lastname: "Doe",
+        email: "jdoe@example.com",
+        telephone: "512-555-1111",
+      },
+      billing_address: {
+        region: "New York",
+        region_id: 43,
+        region_code: "NY",
+        country_id: "US",
+        street: ["123 Oak Ave"],
+        postcode: "10577",
+        city: "Purchase",
+        firstname: "Jane",
+        lastname: "Doe",
+        email: "jdoe@example.com",
+        telephone: "512-555-1111",
+      },
+      shipping_carrier_code: "flatrate",
+      shipping_method_code: "flatrate",
+    },
+  });
+};
+
+const createOrder = async (client) => {
+  await client.post("carts/mine/payment-information", {
+    paymentMethod: {
+      method: "checkmo",
+    },
+    billing_address: {
+      email: "jdoe@example.com",
+      region: "New York",
+      region_id: 43,
+      region_code: "NY",
+      country_id: "US",
+      street: ["123 Oak Ave"],
+      postcode: "10577",
+      city: "Purchase",
+      telephone: "512-555-1111",
+      firstname: "Jane",
+      lastname: "Doe",
+    },
+  });
+};
