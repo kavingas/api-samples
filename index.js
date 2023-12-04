@@ -9,7 +9,7 @@ const getNetworkClient = require("./getNetworkClient");
   try {
     const client = await getNetworkClient;
     let promises = [];
-    for(let x=1;x<11;x++){
+    for(let x=12;x<22;x++){
       promises.push(createSpecialPrice(client,
         {"prices":[{"price_from":"2023-12-27 21:01:00","price_to":"2023-12-28 21:30:00","price":17.5,"store_id":0,"sku":"product_dynamic_"+x}]}
         ))
@@ -22,12 +22,11 @@ const getNetworkClient = require("./getNetworkClient");
 
 const createSpecialPrice = async (client,data)=>{
   await client
-  .post('/rest/V1/products/special-price',data)
+  .post('rest/V1/products/special-price',data)
   .then(r=>{
-    console.log(r)
+    console.log('success ' + data)
   })
   .catch(e=>{
-    console.error('[ERROR]')
     console.log(e.response.data.message + e.config.data)
   })
 }
