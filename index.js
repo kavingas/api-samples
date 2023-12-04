@@ -22,7 +22,7 @@ const getNetworkClient = require("./getNetworkClient");
 
 const createSpecialPrice = async (client,data)=>{
   await client
-  .post('/rest/async/V1/products/special-price',data)
+  .post('/rest/V1/products/special-price',data)
   .then(r=>{
     console.log(r)
   })
