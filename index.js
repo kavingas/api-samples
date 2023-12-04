@@ -3,28 +3,31 @@ const log = require("./log");
 const util = require("util");
 const fs = require("fs");
 const getNetworkClient = require("./getNetworkClient");
-// const payload = require("./payload.json");
-const payload = require("./payload2.json");
+
 
 (async () => {
   try {
     const client = await getNetworkClient;
-    client
-      // .post("rest/shp_fra_fr/V1/products", payload)
-      .get(
-        "rest/view2/V1/products/?searchCriteria[filterGroups][0][filters][0][field]=tax_class_id&searchCriteria[filterGroups][0][filters][0][value]=0&searchCriteria[filterGroups][1][filters][0][field]=type_id&searchCriteria[filterGroups][1][filters][0][value]=simple",
-        {}
-      )
-      .then((r) => {
-        console.log(JSON.stringify(r.data));
-        fs.writeFileSync("response.json", JSON.stringify(r.data));
-      })
-      .catch((e) => {
-        console.error(e.response.data);
-      });
+    let promises = [];
+    for(let x=1;x<11;x++){
+      promises.push(createSpecialPrice(client,
+        {"prices":[{"price_from":"2023-12-27 21:01:00","price_to":"2023-12-28 21:30:00","price":17.5,"store_id":0,"sku":"product_dynamic_"+x}]}
+        ))
+    }
+    await Promise.all(promises)
   } catch (e) {
-    console.error(e.response.data);
+    console.error(e.response);
   }
 })();
 
-//rest/45/V1/products/?searchCriteria[filterGroups][0][filters][0][field]=tax_class_id&searchCriteria[filterGroups][0][filters][0][condition_type]=0&searchCriteria[filterGroups][1][filters][0][field]=type_id&searchCriteria[filterGroups][1][filters][0][value]=simple
+const createSpecialPrice = async (client,data)=>{
+  await client
+  .post('/rest/async/V1/products/special-price',data)
+  .then(r=>{
+    console.log(r)
+  })
+  .catch(e=>{
+    console.error('[ERROR]')
+    console.log(e.response.data.message + e.config.data)
+  })
+}
